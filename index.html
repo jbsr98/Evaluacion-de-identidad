@@ -1,120 +1,314 @@
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Identity Assessment Questionnaire</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
-        }
-        .question {
-            margin: 15px 0;
-        }
-        button {
-            margin-top: 20px;
-            padding: 10px 15px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Evaluación de Identidad</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    text-align: center;
+    width: 450px;
+    transition: opacity 0.3s ease;
+}
+
+.fade-out { opacity: 0; }
+
+h2 { margin-bottom: 20px; }
+
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.si { background: #333333; color: white; }
+.no { background: #808080; color: white; }
+.continuar { background: #007BFF; color: white; }
+
+.mensaje {
+    margin-top: 15px;
+    font-size: 15px;
+    color: #333;
+}
+
+/* Barra de progreso */
+.barra {
+    width: 100%;
+    height: 10px;
+    background: #ddd;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+#progreso {
+    height: 100%;
+    width: 0%;
+    background: #007BFF;
+    border-radius: 5px;
+    transition: width 0.3s;
+}
+</style>
+
 </head>
 <body>
 
-<div class="container">
-    <h1>Identity Assessment Questionnaire</h1>
-    <form id="questionnaire">
-        <div class="question">
-            <label for="q1">1. What is your name?</label>
-            <input type="text" id="q1" name="q1" required>
-        </div>
-        <div class="question">
-            <label for="q2">2. What is your age?</label>
-            <input type="number" id="q2" name="q2" required>
-        </div>
-        <div class="question">
-            <label for="q3">3. What is your gender?</label>
-            <input type="text" id="q3" name="q3" required>
-        </div>
-        <div class="question">
-            <label for="q4">4. Where are you from?</label>
-            <input type="text" id="q4" name="q4" required>
-        </div>
-        <div class="question">
-            <label for="q5">5. What are your hobbies?</label>
-            <input type="text" id="q5" name="q5" required>
-        </div>
-        <div class="question">
-            <label for="q6">6. Describe your personality.</label>
-            <input type="text" id="q6" name="q6" required>
-        </div>
-        <div class="question">
-            <label for="q7">7. What do you value in life?</label>
-            <input type="text" id="q7" name="q7" required>
-        </div>
-        <div class="question">
-            <label for="q8">8. What is your occupation?</label>
-            <input type="text" id="q8" name="q8" required>
-        </div>
-        <div class="question">
-            <label for="q9">9. What is your dream job?</label>
-            <input type="text" id="q9" name="q9" required>
-        </div>
-        <div class="question">
-            <label for="q10">10. What languages do you speak?</label>
-            <input type="text" id="q10" name="q10" required>
-        </div>
-        <div class="question">
-            <label for="q11">11. What is your favorite book?</label>
-            <input type="text" id="q11" name="q11" required>
-        </div>
-        <div class="question">
-            <label for="q12">12. Describe your relationships.</label>
-            <input type="text" id="q12" name="q12" required>
-        </div>
-        <div class="question">
-            <label for="q13">13. What is your biggest fear?</label>
-            <input type="text" id="q13" name="q13" required>
-        </div>
-        <div class="question">
-            <label for="q14">14. What inspires you?</label>
-            <input type="text" id="q14" name="q14" required>
-        </div>
-        <button type="button" onclick="submitForm()">Submit</button>
-    </form>
+<div class="container" id="contenedor">
+    <div class="barra">
+        <div id="progreso"></div>
+    </div>
+    <div id="contenido"></div>
 </div>
 
 <script>
-    function submitForm() {
-        const form = document.getElementById('questionnaire');
-        const data = new FormData(form);
-        const values = {};
-        data.forEach((value, key) => {
-            values[key] = value;
-        });
-        console.log(values); // Here you may handle the form data, e.g., send it to a server.
-        alert('Thank you for completing the questionnaire!');
+
+// ---------------- DATOS ----------------
+
+const preguntas = [
+    "¿Eres hombre o no perteneces a algún proyecto femininsta?",
+    "¿Eres heterosexual? (Atracción a tu género opuesto)",
+    "¿Eres monosexual? (heterosexual u homosexual)",
+    "¿Eres cisgénero? (Tu género es el mismo que tu sexo asignado)",
+    "¿Entras en el binarismo de género? (Hombre o mujer)",
+    "¿Sientes atracción sexual?",
+    "¿Eres normosexual?",
+    "¿Sientes atracción romántica?",
+    "¿Eres una persona monógama, monógama en serie, infiel clandestina?",
+    "¿Eres corporalmente normativo y neurotípico?",
+    "¿Muestras una ciudadanía ejemplar nacional? (Responder que no en caso de ser: Migrante, antisistema, marginalizada, librepensadora, anarquista)",
+    "¿Eres creyente? (De cualquier religión dominante)",
+    "¿Eres una persona educada en la cultura y lengua dominante?",
+    "¿Eres una persona capitalista, porpietaria de capital o de medios de producción?"
+];
+
+const violencias = [
+    "Misoginia y machismo",
+    "Homoantagonismo, lesboantagonismo, LGTBIQ+ antagonismo",
+    "Biantagonismo y panantagonismo",
+    "Cissexismo, transmisoginia y transantagonismo",
+    "Enebeantagonismo",
+    "Alosexismo",
+    "Prejuicios sexuales, moralización del deseo, estigma sobre los trabajos sexuales, pornoantagonismo, negatividad sexual y prejuicios patriarcales hacia la promiscuidad en mujeres",
+    "Estigmatización afectiva",
+    "Poliantagonismo",
+    "Gordoantagonismo, dismorfantagonismo y rechazo a la neurodivergencia",
+    "Represión estatal, xenofobia, incumplimiento de derechos humanos y civiles, monopolio estatal de autoridad y violencia, y exclusión social",
+    "Dogmatismo religioso y antilaicismo",
+    "Discriminación cultural y lingüística, uniformización cultural, estigmatización de lo no acorde a la moral de la cultura, y etnocidio",
+    "Capacitismo, y explotación y desigualdad económica"
+];
+
+const resistencias = [
+    "Mujer, feminista",
+    "Diversidad sexual (LGBTQ+)",
+    "Plurisexualidad (bisexual, pansexual)",
+    "Identidades trans",
+    "Identidades no binarias o queer",
+    "Asexualidad (gris-asexual, demisexual)",
+    "Disidencias sexuales (activista sex-positive, practicante de BDSM, trabajador sexual)",
+    "Arromanticismo",
+    "Relaciones no monógamas (poliamor, etc.)",
+    "Diversidad corporal y neurodivergencia",
+    "Migrante, antisistema, marginalizado, anarquista, y otras disidencias sociales",
+    "Ateísmo o agnosticismo",
+    "Practicante de cultura y habla de lengua minorizada",
+    "Clase trabajadora / subalterna"
+];
+
+const acciones = [
+"Escuchar y apoyar activamente voces feministas, cuestionar roles de género y promover igualdad en espacios cotidianos.",
+"Informarte sobre diversidad sexual y evitar reproducir chistes, prejuicios o exclusiones hacia personas LGBTQ+.",
+"Reconocer y validar orientaciones plurisexuales, evitando invisibilizar o cuestionar su legitimidad.",
+"Usar pronombres correctos, respetar identidades trans y apoyar derechos de las personas trans.",
+"Reconocer y respetar identidades no binarias y expresiones de género diversas.",
+"Respetar diferentes experiencias de atracción sexual y evitar presionar a otras personas sobre su sexualidad.",
+"Evitar juzgar prácticas sexuales consensuadas y promover educación sexual informada.",
+"Valorar diferentes formas de vincularse afectivamente sin estigmatizar.",
+"Respetar modelos relacionales diversos como el poliamor o acuerdos no monógamos consensuados.",
+"Cuestionar estándares corporales impuestos y promover inclusión hacia diversidad corporal y neurodivergente.",
+"Ser crítico con discursos nacionalistas excluyentes y apoyar derechos de personas migrantes o marginadas.",
+"Promover el respeto a la diversidad de creencias y la convivencia en contextos laicos.",
+"Valorar y respetar culturas y lenguas distintas a la dominante.",
+"Reflexionar sobre desigualdades económicas y apoyar prácticas más justas y solidarias."
+];
+
+const cuidados = [
+"Buscar redes de apoyo (amistades, colectivas, espacios feministas) donde puedas expresarte con seguridad y sin juicio.",
+"Acercarte a comunidades LGBTQ+ o aliadas donde tu identidad sea validada y respetada.",
+"Reconocer tu orientación como válida y evitar internalizar prejuicios sociales.",
+"Conectar con personas trans o aliadas y acceder a espacios seguros y recursos informativos.",
+"Buscar comunidades donde las identidades no binarias sean comprendidas y respetadas.",
+"Respetar tus propios límites en torno a la sexualidad y rodearte de personas que los respeten.",
+"Informarte sobre sexualidad desde enfoques positivos y libres de culpa.",
+"Validar tus formas de sentir y vincularte sin compararte con normas sociales.",
+"Construir acuerdos claros en tus relaciones y rodearte de personas que respeten tus vínculos.",
+"Practicar la aceptación corporal y buscar espacios inclusivos para la neurodivergencia.",
+"Conocer tus derechos y buscar apoyo en organizaciones o comunidades que acompañen tu situación.",
+"Explorar tus creencias libremente y rodearte de espacios donde no se te imponga una visión.",
+"Preservar y valorar tu identidad cultural y lingüística.",
+"Buscar apoyo comunitario o redes solidarias frente a desigualdades económicas."
+];
+
+// ---------------- VARIABLES ----------------
+
+let indice = 0;
+let puntaje = 0;
+let respuestas = [];
+
+const contenedor = document.getElementById("contenido");
+const caja = document.getElementById("contenedor");
+
+// ---------------- FUNCIONES ----------------
+
+function actualizarProgreso() {
+    let progreso = (indice / preguntas.length) * 100;
+    document.getElementById("progreso").style.width = progreso + "%";
+}
+
+function mostrarPregunta() {
+    if (indice >= preguntas.length) {
+        mostrarResultado();
+        return;
     }
+
+    actualizarProgreso();
+
+    contenedor.innerHTML = `
+        <p><strong>Pregunta ${indice + 1} de ${preguntas.length}</strong></p>
+        <h2>${preguntas[indice]}</h2>
+        <button class="si" onclick="responder('si')">Sí</button>
+        <button class="no" onclick="responder('no')">No</button>
+    `;
+}
+
+function responder(respuesta) {
+    respuestas[indice] = respuesta;
+
+    caja.classList.add("fade-out");
+
+    setTimeout(() => {
+        caja.classList.remove("fade-out");
+
+        if (respuesta === "si") {
+            puntaje++;
+
+            contenedor.innerHTML = `
+                <h2>Ten cuidado de no fomentar las siguientes violencias:</h2>
+                <div class="mensaje"><strong>${violencias[indice]}</strong></div>
+
+                <h3>Cómo puedes reducir o evitar reproducirlas:</h3>
+                <div class="mensaje">${acciones[indice]}</div>
+
+                <button class="continuar" onclick="siguiente()">Continuar</button>
+            `;
+        } else {
+            contenedor.innerHTML = `
+                <h2>Probablemente pertenezcas a una de estas identidades o proyectos de resistencia:</h2>
+                <div class="mensaje"><strong>${resistencias[indice]}</strong></div>
+
+                <h3>Formas de cuidado y apoyo:</h3>
+                <div class="mensaje">${cuidados[indice]}</div>
+
+                <button class="continuar" onclick="siguiente()">Continuar</button>
+            `;
+        }
+
+    }, 300);
+}
+
+function siguiente() {
+    indice++;
+    mostrarPregunta();
+}
+
+function mostrarResultado() {
+    actualizarProgreso();
+
+    let total = preguntas.length;
+    let hegemonia = puntaje;
+    let resistencia = total - puntaje;
+
+    let interpretacion = "";
+
+    if (puntaje === total) {
+        interpretacion = "Tu perfil se alinea completamente con estructuras hegemónicas.";
+    } else if (puntaje >= 10) {
+        interpretacion = "Tu perfil muestra cercanía con estructuras hegemónicas.";
+    } else if (puntaje >= 7) {
+        interpretacion = "Tu perfil es mixto.";
+    } else if (puntaje >= 3) {
+        interpretacion = "Tu perfil se inclina hacia resistencia.";
+    } else {
+        interpretacion = "Tu perfil se posiciona principalmente en resistencia.";
+    }
+
+    let recomendacionesViolencia = "";
+    let recomendacionesCuidado = "";
+
+    for (let i = 0; i < preguntas.length; i++) {
+        if (respuestas[i] === "si") {
+            recomendacionesViolencia += `<li><strong>${violencias[i]}</strong>: ${acciones[i]}</li>`;
+        } else {
+            recomendacionesCuidado += `<li><strong>${resistencias[i]}</strong>: ${cuidados[i]}</li>`;
+        }
+    }
+
+    contenedor.innerHTML = `
+        <h2 style="color:${puntaje === total ? 'red' : 'green'};">
+            ${puntaje === total ? 'Identidad Hegemónica Absoluta' : 'Identidad Plural'}
+        </h2>
+
+        <p><strong>Hegemonía:</strong> ${hegemonia}</p>
+        <p><strong>Resistencia:</strong> ${resistencia}</p>
+
+        <hr>
+
+        <h3>Perfil interpretado:</h3>
+        <p>${interpretacion}</p>
+
+        <hr>
+
+        <h3>Reducir violencias:</h3>
+        <ul>${recomendacionesViolencia}</ul>
+
+        <hr>
+
+        <h3>Cuidados y apoyo:</h3>
+        <ul>${recomendacionesCuidado}</ul>
+
+        <button onclick="reiniciar()">Reiniciar</button>
+    `;
+}
+
+function reiniciar() {
+    indice = 0;
+    puntaje = 0;
+    respuestas = [];
+    mostrarPregunta();
+}
+
+// iniciar
+mostrarPregunta();
+
 </script>
 
 </body>
